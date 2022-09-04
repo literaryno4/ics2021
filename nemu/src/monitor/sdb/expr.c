@@ -85,11 +85,15 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
         
-        tokens[nr_token].type = rules[i].token_type;
         switch (rules[i].token_type) {
+          case TK_NOTYPE:
+            break;
           case TK_INTEGER:
-          
-          default: TODO();
+            strncpy(tokens[nr_token].str, substr_start, substr_len); 
+          default: 
+            tokens[nr_token].type = rules[i].token_type;
+            ++nr_token;
+            break;
         }
 
         break;
@@ -105,6 +109,88 @@ static bool make_token(char *e) {
   return true;
 }
 
+bool bad_expr = false;
+
+bool check_parentheses(int p, int q) {
+  if (tokens[p].type == '(' && tokens[q].type == ')') {
+    for (int i = p + 1; i < q; ++i) {
+      if (i > 0 && tokens[i].type == ')') {
+        --i;
+      } else if (tokens[i].type == '(') {
+        ++i;
+      } else if (i == 0 && tokens[i].type == ')') {
+        bad_expr = true;
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
+static bool is_primary(int op) {
+  return op == '+' || op == '-';
+}
+
+static bool is_secondary(int op) {
+  return op == '*' || op == '/';
+}
+
+static int primary_operator(int p, int q) {
+  int ans = p, ans_type = 0;
+  int open = 0;
+  for (; p <= q; ++p) {
+    int type = tokens[p].type;
+    if (open == 0 && (type == '+' || type == '-')) {
+      ans_type = type;
+      ans = p;
+    } else if (open == 0 && !is_primary(ans_type) && is_secondary(type)) {
+      ans_type = type;
+      ans = p;
+    } else if (type == '(') {
+      ++open;
+    } else if (type == ')') {
+      if (open == 0) {
+        Log("parentheses not match\n");
+        bad_expr = true;
+      } else {
+        --open;
+      }
+    }
+  }
+  return ans;
+}
+
+static word_t eval(int p, int q) {
+  if (bad_expr) {
+    return 0;
+  }
+
+  if (p > q) {
+    Log("expr position error\n");
+    bad_expr = true;
+  } else if (p == q) {
+    return atoi(tokens[p].str);
+  } else if (check_parentheses(p, q) == true) {
+    return eval(p + 1, q - 1);
+  } else {
+    int op = primary_operator(p, q);
+    int val1 = eval(p, op - 1);
+    int val2 = eval(op + 1, q);
+
+    switch (tokens[op].type) {
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/': return val1 / val2;
+      default: 
+        bad_expr = true;
+        return 0;
+    }
+  }
+  return 0;
+}
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -113,7 +199,19 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  // for (int i = 0; i < nr_token; ++i) {
+  //   printf("type: %d\n", tokens[i].type);
+  //   if (tokens[i].type == TK_INTEGER) {
+  //     printf("val: %s\n", tokens[i].str);
+  //   }
+  //   printf("\n");
+  // }
 
-  return 0;
+  word_t ans = eval(0, nr_token - 1);
+  if (bad_expr) {
+    *success = false;
+    return 0;
+  }
+  *success = true;
+  return ans;
 }

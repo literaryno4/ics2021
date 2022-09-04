@@ -96,6 +96,17 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
+  char* arg = strtok(NULL, "\n");
+  bool success;
+
+  printf("expr: %d\n", atoi("-5"));
+  word_t ans = expr(arg, &success);
+  if (success) {
+    printf("%ld\n", ans);
+  } else {
+    printf("bad expr, please check!\n");
+  }
+
   return 0;
 }
 
