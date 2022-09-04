@@ -8,7 +8,15 @@ const char *regs[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 
+#define NR_REGS 32
+
 void isa_reg_display() {
+  printf("register info: \n");
+  int i; 
+  for (i = 0; i < NR_REGS; ++i) {
+    printf("%4s %16p\n", regs[i], (void *)cpu.gpr[i]._64);
+  }
+  printf("%4s %16p\n", "pc", (void *)cpu.pc);
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
