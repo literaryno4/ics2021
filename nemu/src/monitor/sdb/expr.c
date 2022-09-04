@@ -21,6 +21,7 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
+  {"[\\+\\-]?[0-9]+", TK_INTEGER}, 
   {" +", TK_NOTYPE},                // spaces
   {"\\+", '+'},                     // plus
   {"\\-", '-'},                     // sub
@@ -29,7 +30,6 @@ static struct rule {
   {"\\(", '('},                     // div
   {"\\)", ')'},                     // div
   {"==", TK_EQ},                    // equal
-  {"[+|-]?(0)|([1-9][0-9]*)", TK_INTEGER}, 
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -60,6 +60,7 @@ typedef struct token {
 
 static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
+static bool is_primary(int);
 
 static bool make_token(char *e) {
   int position = 0;
@@ -89,7 +90,12 @@ static bool make_token(char *e) {
           case TK_NOTYPE:
             break;
           case TK_INTEGER:
-            strncpy(tokens[nr_token].str, substr_start, substr_len); 
+            if (nr_token > 0 && tokens[nr_token - 1].type == TK_INTEGER && is_primary(substr_start[0])) {
+              tokens[nr_token].type = '+';
+              ++nr_token;
+            }
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+            tokens[nr_token].str[substr_len] = '\0';
           default: 
             tokens[nr_token].type = rules[i].token_type;
             ++nr_token;
@@ -207,7 +213,9 @@ word_t expr(char *e, bool *success) {
   //   printf("\n");
   // }
 
+  bad_expr = false;
   word_t ans = eval(0, nr_token - 1);
+  nr_token = 0;
   if (bad_expr) {
     *success = false;
     return 0;
