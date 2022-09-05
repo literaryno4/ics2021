@@ -1,5 +1,6 @@
 #include <isa.h>
 #include "local-include/reg.h"
+#include <stdbool.h>
 
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -20,5 +21,13 @@ void isa_reg_display() {
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
+  int i; 
+  for (i = 0; i < NR_REGS; ++i) {
+    if (strcmp(s, regs[i]) == 0) {
+      *success = true;
+      return cpu.gpr[i]._64;
+    }
+  }
+  *success = false;
   return 0;
 }

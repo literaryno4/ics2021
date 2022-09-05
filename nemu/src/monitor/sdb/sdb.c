@@ -2,8 +2,10 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <utils.h>
 #include "sdb.h"
 #include "memory/vaddr.h"
+#include "stdbool.h"
 
 static int is_batch_mode = false;
 
@@ -101,7 +103,7 @@ static int cmd_p(char *args) {
 
   word_t ans = expr(arg, &success);
   if (success) {
-    printf("%ld\n", ans);
+    printf("%ld 0x%lx\n", ans, ans);
   } else {
     printf("bad expr, please check!\n");
   }
@@ -236,15 +238,14 @@ void test_expr() {
     printf("%ld %s: ", result, exp);
     word_t ans = expr(exp, &success);
     if (result == ans) {
-      printf("pass\n");
+      printf( ASNI_FG_GREEN "pass" ASNI_NONE "\n");
     } else {
-      printf("failed, %ld != %ld\n", result, ans);
+      printf( ASNI_FG_RED "failed, %ld != %ld" ASNI_NONE "\n", result, ans);
     }
   }
 
   free(line);
   fclose(stream);
-  exit(EXIT_SUCCESS);
 }
 
 void init_sdb() {
@@ -253,5 +254,6 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+
   test_expr();
 }
