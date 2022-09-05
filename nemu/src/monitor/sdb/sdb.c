@@ -112,11 +112,24 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_w(char *args) {
+  char* arg = strtok(NULL, "\n");
+  bool success;
+
+  word_t ans = expr(arg, &success);
+  if (success) {
+    WP* wp = new_wp();
+    wp->old_val = ans; 
+    strcpy(wp->expr, arg);
+  } else {
+    printf("bad expr, please check!\n");
+    return 0;
+  }
+
   return 0;
 }
 static int cmd_d(char *args) {
+  free_wp(atoi(strtok(NULL, "\n")));
   return 0;
-
 }
 
 static int cmd_si(char *args) {

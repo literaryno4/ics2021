@@ -3,6 +3,7 @@
 #include <cpu/difftest.h>
 #include <isa-all-instr.h>
 #include <locale.h>
+#include "../monitor/sdb/sdb.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -27,6 +28,25 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+
+#ifdef CONFIG_WATCHPOINT
+  word_t ans;
+  bool success, changed = false;
+  WP* head = wp_head();
+  while (head != NULL) {
+    ans = expr(head->expr, &success);
+    if (success && ans != head->old_val) {
+      changed = true;
+      printf("Old value = %ld(%lx)\n", head->old_val, head->old_val);
+      printf("New value = %ld(%lx)\n", ans, ans);
+      head->old_val = ans;
+    }
+    head = head->next;
+  }
+  if (changed) {
+    nemu_state.state = NEMU_STOP;
+  }
+#endif
 }
 
 #include <isa-exec.h>
