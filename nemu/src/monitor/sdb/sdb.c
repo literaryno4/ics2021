@@ -99,7 +99,6 @@ static int cmd_p(char *args) {
   char* arg = strtok(NULL, "\n");
   bool success;
 
-  printf("expr: %d\n", atoi("-5"));
   word_t ans = expr(arg, &success);
   if (success) {
     printf("%ld\n", ans);
@@ -217,10 +216,42 @@ void sdb_mainloop() {
   }
 }
 
+void test_expr() {
+  FILE* stream;
+  char* line = NULL;
+  size_t len = 0;
+  ssize_t nread;
+  word_t result;
+  char* exp;
+  bool success;
+
+  if ((stream = fopen("/home/chao/ics2021/nemu/src/input", "r")) == NULL) {
+    perror("fopen");
+    exit(EXIT_FAILURE);
+  }
+
+  while ((nread = getline(&line, &len, stream)) != -1) {
+    result = atoi(strtok(line, " "));
+    exp = strtok(NULL, "\n");
+    printf("%ld %s: ", result, exp);
+    word_t ans = expr(exp, &success);
+    if (result == ans) {
+      printf("pass\n");
+    } else {
+      printf("failed, %ld != %ld\n", result, ans);
+    }
+  }
+
+  free(line);
+  fclose(stream);
+  exit(EXIT_SUCCESS);
+}
+
 void init_sdb() {
   /* Compile the regular expressions. */
   init_regex();
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+  test_expr();
 }

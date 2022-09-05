@@ -1,4 +1,5 @@
 #include <isa.h>
+#include "common.h"
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
@@ -58,7 +59,7 @@ typedef struct token {
   char str[32];
 } Token;
 
-static Token tokens[32] __attribute__((used)) = {};
+static Token tokens[128] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 static bool is_primary(int);
 
@@ -76,8 +77,8 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+        //    i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -90,7 +91,10 @@ static bool make_token(char *e) {
           case TK_NOTYPE:
             break;
           case TK_INTEGER:
-            if (nr_token > 0 && tokens[nr_token - 1].type == TK_INTEGER && is_primary(substr_start[0])) {
+            if (nr_token > 0 && 
+              (tokens[nr_token - 1].type == TK_INTEGER ||
+                tokens[nr_token - 1].type == ')') && 
+              is_primary(substr_start[0])) {
               tokens[nr_token].type = '+';
               ++nr_token;
             }
@@ -119,17 +123,25 @@ bool bad_expr = false;
 
 bool check_parentheses(int p, int q) {
   if (tokens[p].type == '(' && tokens[q].type == ')') {
+    int nc = 0;
     for (int i = p + 1; i < q; ++i) {
-      if (i > 0 && tokens[i].type == ')') {
-        --i;
-      } else if (tokens[i].type == '(') {
-        ++i;
-      } else if (i == 0 && tokens[i].type == ')') {
-        bad_expr = true;
-        return false;
+      if (tokens[i].type == '(') {
+        ++nc;
+      } else if (tokens[i].type == ')'){
+        if (nc > 0) {
+          --nc;
+        } else {
+          return false;
+        }
       }
     }
-    return true;
+    if (nc != 0) {
+      Log("bad parentheses\n");
+      bad_expr = true;
+      return false;
+    } else {
+      return true;
+    }
   } else {
     return false;
   }
@@ -205,13 +217,6 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  // for (int i = 0; i < nr_token; ++i) {
-  //   printf("type: %d\n", tokens[i].type);
-  //   if (tokens[i].type == TK_INTEGER) {
-  //     printf("val: %s\n", tokens[i].str);
-  //   }
-  //   printf("\n");
-  // }
 
   bad_expr = false;
   word_t ans = eval(0, nr_token - 1);
