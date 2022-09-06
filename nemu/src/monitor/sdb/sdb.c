@@ -78,8 +78,17 @@ static int cmd_x(char *args) {
   char* arg = strtok(NULL, " ");
   int i, n = atoi(arg);
   vaddr_t addr;
+  bool success;
+
   arg = strtok(NULL, " ");
-  addr = (vaddr_t)strtol(arg, NULL, 16);
+  word_t ans = expr(arg, &success);
+  if (success) {
+    addr = (vaddr_t)ans;
+  } else {
+    printf("bad expr, please check");
+    return 0;
+  }
+  // addr = (vaddr_t)strtol(arg, NULL, 16);
 
   for (i = 1; i <= n; ++i) { 
     if ((i - 1) % 4 == 0) {
@@ -158,6 +167,7 @@ static int cmd_info(char *args) {
     if (strcmp(arg, "r") == 0) {
       isa_reg_display();
     } else if (strcmp(arg, "w") == 0) {
+      print_watchpoints();
     } else {
       printf("Unknown command '%s'\n", arg);
     }

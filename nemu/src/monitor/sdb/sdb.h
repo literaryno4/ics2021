@@ -17,7 +17,7 @@ typedef struct watchpoint {
 
 WP* wp_head();
 
-void printf_watchpoints();
+void print_watchpoints();
 
 WP* new_wp();
 
