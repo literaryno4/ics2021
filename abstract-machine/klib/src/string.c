@@ -58,13 +58,12 @@ int strncmp(const char *s1, const char *s2, size_t n) {
   return s1[i] - s2[i];
 }
 
-void *memset(void *s, int c, size_t n) {
+void *memset(void *s, char c, size_t n) {
   unsigned char* ret = (unsigned char*)s;
   while (n--) {
-    *ret = (unsigned char) n;
+    *ret = c;
     ++ret;
   }
-  *ret = '\0';
   return s;
 }
 
