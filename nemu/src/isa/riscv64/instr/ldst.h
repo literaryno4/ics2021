@@ -27,12 +27,38 @@ def_EHelper(sltiu) {
   rtl_li(s, ddest, (((word_t)*id_src1->preg) < (word_t)((sword_t)(id_src2->imm))) ? 1 : 0);
 }
 
+// shift
+
+def_EHelper(slli) {
+  rtl_slli(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
+}
+
+def_EHelper(srli) {
+  rtl_srli(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
+}
+
+def_EHelper(srli) {
+  rtl_srai(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
+}
+
 def_EHelper(addiw) {
   rtl_addiw(s, ddest, id_src1->preg, id_src2->imm);
 }
 
 def_EHelper(addw) {
   rtl_add(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(mulw) {
+  rtl_mulw(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(divw) {
+  rtl_divw(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(remw) {
+  rtl_remw(s, ddest, id_src1->preg, id_src2->preg);
 }
 
 def_EHelper(add) {
@@ -42,7 +68,6 @@ def_EHelper(add) {
 def_EHelper(sub) {
   rtl_sub(s, ddest, id_src1->preg, id_src2->preg);
 }
-
 
 // control
 
