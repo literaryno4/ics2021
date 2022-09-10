@@ -23,12 +23,12 @@ def_EHelper(sw) {
 
 
 def_EHelper(addi) {
-  rtl_addi(s, ddest, id_src1->preg, id_src2->imm);
+  //rtl_addi(s, ddest, id_src1->preg, id_src2->imm);
+  rtl_li(s, ddest, (*id_src1->preg + id_src2->imm));
 }
 
 def_EHelper(sltiu) {
-  printf("a0 = %ld\n", *id_src1->preg);
-  rtl_li(s, ddest, (((word_t)*id_src1->preg) < (word_t)((sword_t)(id_src2->imm))) ? 1 : 0);
+  rtl_li(s, ddest, ((uint32_t)(*id_src1->preg) < (uint32_t)(id_src2->imm)) ? 1 : 0);
 }
 
 // shift
