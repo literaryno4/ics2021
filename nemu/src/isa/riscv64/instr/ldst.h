@@ -9,6 +9,10 @@ def_EHelper(lw) {
   rtl_lm(s, ddest, dsrc1, id_src2->imm, 4);
 }
 
+def_EHelper(lbu) {
+  rtl_lm(s, ddest, dsrc1, id_src2->imm, 1);
+}
+
 def_EHelper(sd) {
   rtl_sm(s, ddest, dsrc1, id_src2->imm, 8);
 }
@@ -37,7 +41,7 @@ def_EHelper(srli) {
   rtl_srli(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
 }
 
-def_EHelper(srli) {
+def_EHelper(srai) {
   rtl_srai(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
 }
 
@@ -47,6 +51,10 @@ def_EHelper(addiw) {
 
 def_EHelper(addw) {
   rtl_add(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(subw) {
+  rtl_sub(s, ddest, id_src1->preg, id_src2->preg);
 }
 
 def_EHelper(mulw) {
