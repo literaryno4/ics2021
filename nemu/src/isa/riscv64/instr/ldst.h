@@ -52,7 +52,6 @@ def_EHelper(slliw) {
 }
 
 def_EHelper(srliw) {
-  printf ("Exec..srliw \n");
   rtl_srliw(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
 }
 
