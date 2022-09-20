@@ -4,12 +4,12 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
+typedef unsigned char uchar;
+
 size_t strlen(const char *s) {
-  size_t ret = 0;
-  while (s[ret] != '\0') {
-    ++ret;
-  }
-  return ret;
+  size_t n;
+  for (n = 0; s[n]; n++);
+  return n;
 }
 
 char *strcpy(char *dst, const char *src) {
@@ -21,14 +21,14 @@ char *strcpy(char *dst, const char *src) {
   return dst;
 }
 
-char *strncpy(char *dst, const char *src, size_t n) {
-  size_t i;
-  for (i = 0; i < n && src[i] != '\0'; i++)
-     dst[i] = src[i];
-  for ( ; i < n; i++)
-     dst[i] = '\0';
-
-  return dst;
+char *strncpy(char *s, const char *t, size_t n) {
+  char* os;
+  os = s;
+  while (n-- > 0 && (*s++ = *t++) != 0); 
+  while (n-- > 0) {
+    *s++ = 0;
+  }
+  return os;
 }
 
 char *strcat(char *dst, const char *src) {
@@ -49,16 +49,17 @@ int strcmp(const char *s1, const char *s2) {
   return s1[i] - s2[i];
 }
 
-int strncmp(const char *s1, const char *s2, size_t n) {
-  size_t i;
-  for (i = 0; i < n && s1[i] != '\0' && s1[i] == s2[i]; ++i);
-  if (i == n) {
+int strncmp(const char *p, const char *q, size_t n) {
+  while (n > 0 && *p && *p == *q) {
+    n--, p++, q++;
+  }
+  if (n == 0) {
     return 0;
   }
-  return s1[i] - s2[i];
+  return (uchar)*p - (uchar)*q;
 }
 
-void *memset(void *s, char c, size_t n) {
+void *memset(void *s, int c, size_t n) {
   unsigned char* ret = (unsigned char*)s;
   while (n--) {
     *ret = c;
@@ -68,36 +69,41 @@ void *memset(void *s, char c, size_t n) {
 }
 
 void *memmove(void *dst, const void *src, size_t n) {
-  size_t i;
-  unsigned char buf[n];
-  for (i = 0; i < n; ++i) {
-    buf[i] = ((unsigned char*)src)[i];
-  }
-  for (i = 0; i < n; ++i) {
-    ((unsigned char*)dst)[i] = buf[i];
+  const char* s;
+  char *d;
+  s = src;
+  d = dst;
+  if (s < d && s + n > d) {
+    s += n;
+    d += n;
+    while (n-- > 0) {
+      *--d = *--s;
+    }   
+  } else {
+    while (n-- > 0) {
+      *d++ = *s++;
+    }
   }
   return dst;
 }
 
 void *memcpy(void *dst, const void *src, size_t n) {
-  size_t i;
-  for (i = 0; i < n; ++i) {
-    ((unsigned char*)dst)[i] = ((unsigned char*)src)[i];
-  }
-
-  return dst;
+  return memmove(dst, src, n);
 }
 
-int memcmp(const void *s1, const void *s2, size_t n) {
-  unsigned char* ss1 = (unsigned char*) s1;
-  unsigned char* ss2 = (unsigned char*) s2;
+int memcmp(const void *v1, const void *v2, size_t n) {
+  const uchar *s1, *s2;
+  s1 = v1;
+  s2 = v2;
 
-  size_t i;
-  for (i = 0; i < n && ss1[i] != '\0' && ss1[i] == ss2[i]; ++i);
-  if (i == n) {
-    return 0;
+  while (n-- > 0) {
+    if (*s1 != *s2) {
+      return *s1 - *s2;
+    }
+    s1++, s2++;
   }
-  return ss1[i] - ss2[i];
+
+  return 0;
 }
 
 #endif

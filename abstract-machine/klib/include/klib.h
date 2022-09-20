@@ -12,10 +12,7 @@ extern "C" {
 //#define __NATIVE_USE_KLIB__
 
 // string.h
-
-// int c --> char c, I change this because int c while generate unknown instruction
-// when force cast to char
-void  *memset    (void *s, char c, size_t n);
+void  *memset    (void *s, int c, size_t n);
 void  *memcpy    (void *dst, const void *src, size_t n);
 void  *memmove   (void *dst, const void *src, size_t n);
 int    memcmp    (const void *s1, const void *s2, size_t n);
