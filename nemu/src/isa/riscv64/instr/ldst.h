@@ -68,7 +68,7 @@ def_EHelper(srai) {
 }
 
 def_EHelper(slliw) {
-  rtl_slliw(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
+  rtl_slliw(s, ddest, id_src1->preg, (id_src2->imm & (0b111111)));
 }
 
 def_EHelper(srliw) {
@@ -76,7 +76,7 @@ def_EHelper(srliw) {
 }
 
 def_EHelper(sraiw) {
-  rtl_sraiw(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
+  rtl_sraiw(s, ddest, id_src1->preg, (id_src2->imm & (0b111111)));
 }
 
 def_EHelper(sllw) {

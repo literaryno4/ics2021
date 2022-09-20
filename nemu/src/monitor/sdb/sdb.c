@@ -278,5 +278,5 @@ void init_sdb() {
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 
-  test_expr();
+  //test_expr();
 }
