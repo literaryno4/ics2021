@@ -9,6 +9,14 @@ def_EHelper(lw) {
   rtl_lm(s, ddest, dsrc1, id_src2->imm, 4);
 }
 
+def_EHelper(lh) {
+  rtl_lms(s, ddest, dsrc1, id_src2->imm, 2);
+}
+
+def_EHelper(lhu) {
+  rtl_lm(s, ddest, dsrc1, id_src2->imm, 2);
+}
+
 def_EHelper(lbu) {
   rtl_lm(s, ddest, dsrc1, id_src2->imm, 1);
 }
@@ -30,7 +38,7 @@ def_EHelper(sb) {
 }
 
 def_EHelper(addi) {
-  rtl_li(s, ddest, (*id_src1->preg + id_src2->imm));
+  rtl_li(s, ddest, (*id_src1->preg + id_src2->simm));
 }
 
 def_EHelper(sltiu) {
@@ -64,7 +72,7 @@ def_EHelper(slliw) {
 }
 
 def_EHelper(srliw) {
-  rtl_srliw(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
+  rtl_srliw(s, ddest, id_src1->preg, (id_src2->imm & (0b111111)));
 }
 
 def_EHelper(sraiw) {
@@ -73,6 +81,14 @@ def_EHelper(sraiw) {
 
 def_EHelper(sllw) {
   rtl_sllw(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(srlw) {
+  rtl_srlw(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(sraw) {
+  rtl_sraw(s, ddest, id_src1->preg, id_src2->preg);
 }
 
 // compute
@@ -107,6 +123,10 @@ def_EHelper(add) {
 
 def_EHelper(sub) {
   rtl_sub(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(mul) {
+  rtl_li(s, ddest, ((*id_src1->preg) * (*id_src2->preg)) & 0xffffffff);
 }
 
 def_EHelper(slt) {
@@ -170,8 +190,8 @@ def_EHelper(bge) {
   }
 }
 
-//def_EHelper(bltu) {
-//  if ((word_t)(*id_src1->preg) < (word_t)(*id_dest->preg)) {
-//    rtl_j(s,  id_src2->imm + s->pc);
-//  }
-//}
+def_EHelper(bltu) {
+  if ((*id_src1->preg) < (*id_dest->preg)) {
+    rtl_j(s,  id_src2->imm + s->pc);
+  }
+}
