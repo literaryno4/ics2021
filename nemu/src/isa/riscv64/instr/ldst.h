@@ -48,15 +48,15 @@ def_EHelper(xori) {
 // shift
 
 def_EHelper(slli) {
-  rtl_slli(s, ddest, id_src1->preg, (id_src2->imm));
+  rtl_slli(s, ddest, id_src1->preg, (id_src2->imm & (0b111111)));
 }
 
 def_EHelper(srli) {
-  rtl_srli(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
+  rtl_srli(s, ddest, id_src1->preg, (id_src2->imm & (0b111111)));
 }
 
 def_EHelper(srai) {
-  rtl_srai(s, ddest, id_src1->preg, (id_src2->imm & (0b11111)));
+  rtl_srai(s, ddest, id_src1->preg, (id_src2->imm & (0b111111)));
 }
 
 def_EHelper(slliw) {
