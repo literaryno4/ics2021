@@ -21,9 +21,10 @@ char *strcpy(char *dst, const char *src) {
   return dst;
 }
 
-char *strncpy(char *s, const char *t, size_t n) {
+char *strncpy(char *s, const char *t, size_t size) {
   char* os;
   os = s;
+  int n = size;
   while (n-- > 0 && (*s++ = *t++) != 0); 
   while (n-- > 0) {
     *s++ = 0;
@@ -49,7 +50,8 @@ int strcmp(const char *s1, const char *s2) {
   return s1[i] - s2[i];
 }
 
-int strncmp(const char *p, const char *q, size_t n) {
+int strncmp(const char *p, const char *q, size_t size) {
+  int n = size;
   while (n > 0 && *p && *p == *q) {
     n--, p++, q++;
   }
@@ -59,8 +61,9 @@ int strncmp(const char *p, const char *q, size_t n) {
   return (uchar)*p - (uchar)*q;
 }
 
-void *memset(void *s, int c, size_t n) {
+void *memset(void *s, int c, size_t size) {
   unsigned char* ret = (unsigned char*)s;
+  int n = size;
   while (n--) {
     *ret = c;
     ++ret;
@@ -68,9 +71,10 @@ void *memset(void *s, int c, size_t n) {
   return s;
 }
 
-void *memmove(void *dst, const void *src, size_t n) {
+void *memmove(void *dst, const void *src, size_t size) {
   const char* s;
   char *d;
+  int n = size;
   s = src;
   d = dst;
   if (s < d && s + n > d) {
@@ -91,8 +95,9 @@ void *memcpy(void *dst, const void *src, size_t n) {
   return memmove(dst, src, n);
 }
 
-int memcmp(const void *v1, const void *v2, size_t n) {
+int memcmp(const void *v1, const void *v2, size_t size) {
   const uchar *s1, *s2;
+  int n = size;
   s1 = v1;
   s2 = v2;
 
