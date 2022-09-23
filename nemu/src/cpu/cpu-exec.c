@@ -147,7 +147,7 @@ void cpu_exec(uint64_t n) {
            (nemu_state.halt_ret == 0 ? ASNI_FMT("HIT GOOD TRAP", ASNI_FG_GREEN) :
             ASNI_FMT("HIT BAD TRAP", ASNI_FG_RED))),
           nemu_state.halt_pc);
-      // fall through
+#ifdef CONFIG_ITRACE_COND
       if (nemu_state.halt_ret != 0) {
         for (int i = 0; i < IRBUFSZ; ++i) {
           if (i == (irbpos + IRBUFSZ - 1) % IRBUFSZ) {
@@ -157,6 +157,8 @@ void cpu_exec(uint64_t n) {
           }
         }
       }
+#endif
+    // fall through
     case NEMU_QUIT: statistic();
   }
 }

@@ -1,5 +1,19 @@
+#include "common.h"
 #include "rtl-basic.h"
 #include <rtl/rtl.h>
+
+#ifdef CONFIG_FTRACE 
+
+char* find_symbol(void*);
+int space_len = 0;
+
+static void print_space (int len) {
+  for (int i = 0; i < len; ++i) {
+    printf(" ");
+  }
+}
+
+#endif
 
 def_EHelper(ld) {
   rtl_lm(s, ddest, dsrc1, id_src2->imm, 8);
@@ -157,12 +171,33 @@ def_EHelper(or) {
 
 def_EHelper(jal) {
   rtl_li(s, ddest, s->pc + 4);
-  rtl_j(s, ((id_src1->imm + s->pc) & 0xffffffffffdfffff));
+  word_t addr = ((id_src1->imm + s->pc) & 0xffffffffffdfffff);
+  rtl_j(s, addr);
+#ifdef CONFIG_FTRACE 
+  printf("%lx : ", s->pc);
+  print_space(space_len);
+  printf("call [%s@%lx]\n", find_symbol((void*)addr), addr);
+  space_len += 2;
+#endif
 }
 
 def_EHelper(jalr) {
   rtl_li(s, ddest, s->pc + 4);
-  rtl_j(s, ((id_src2->imm + *(id_src1->preg))>>1)<<1);
+  word_t addr = ((id_src2->imm + *(id_src1->preg))>>1)<<1;
+  rtl_j(s, addr);
+#ifdef CONFIG_FTRACE 
+  if (((s->isa.instr.s.rs1) & 0b11110) == 0) {
+    space_len -= 2;
+    printf("%lx : ", s->pc);
+    print_space(space_len);
+    printf("ret [%s@%lx]\n", find_symbol((void*)(s->pc + 4)), addr);
+  } else {
+    printf("%lx : ", s->pc);
+    print_space(space_len);
+    printf("call [%s@%lx]\n", find_symbol((void*)addr), addr);
+    space_len += 2;
+  }
+#endif
 }
 
 // branch
