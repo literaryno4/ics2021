@@ -32,7 +32,6 @@ static void* mmapfile(const char* filename) {
     return 0;
   }
   long pyfile_size = ftell(pyfile);
-  // printf("file size: %zd\n", pyfile_size);
 
   void *pybytes = mmap(NULL, (size_t)pyfile_size, PROT_READ, MAP_PRIVATE,
                        fileno(pyfile), 0);
@@ -59,16 +58,6 @@ static int parseelf(void* pybytes, struct elf_symbol* sts) {
     return 1;
   }
 
-  // printf("program header offset: %zd\n", elf_hdr.e_phoff);
-  // printf("program header num: %d\n", elf_hdr.e_phnum);
-  // printf("section header offset: %zd\n", elf_hdr.e_shoff);
-  // printf("section header num: %d\n", elf_hdr.e_shnum);
-  // printf("section header string table: %d\n", elf_hdr.e_shstrndx);
-
-  // size_t string_offset = elf_hdr.e_shstrndx;
-  // printf("string offset at %zd\n", string_offset);
-  // printf("\n");
-
   char *cbytes = (char *)pybytes;
 
   size_t dynstr_off = 0;
@@ -88,20 +77,12 @@ static int parseelf(void* pybytes, struct elf_symbol* sts) {
         break;
       case SHT_STRTAB:
         if (!dynstr_off) {
-          // printf("found dynamic string table at %zd\n", shdr.sh_offset);
           dynstr_off = shdr.sh_offset;
         } else if (!findstrtab) {
-          // printf("found string table at %zd\n", shdr.sh_offset);
           strtab_off = shdr.sh_offset;
           findstrtab = 1;
         }
         break;
-      // case SHT_DYNSYM:
-      //   dynsym_off = shdr.sh_offset;
-      //   dynsym_sz = shdr.sh_size;
-      //   printf("found dynsym table at %zd, size %zd\n", shdr.sh_offset,
-      //          shdr.sh_size);
-      //   break;
       default:
         break;
     }
@@ -118,32 +99,16 @@ static int parseelf(void* pybytes, struct elf_symbol* sts) {
     {
       char* name = cbytes + strtab_off + sym.st_name;
       char* dynname = cbytes + dynstr_off + sym.st_name;
-      // printf("SYMBOL TABLE ENTRY %zd\n", j);
-      // printf("st_name = %x", sym.st_name);
       if (strlen(name)) {
-        // printf(" (%s), addr: %lx", name, strtab_off + sym.st_name);
         strcpy(sts[sts_idx].name, name);
       } else {
-        // printf(" (%s)", cbytes + dynstr_off + sym.st_name);
         strcpy(sts[sts_idx].name, dynname);
       }
-      // printf("\n");
-      // printf("st_info = %d\n", sym.st_info);
-      // printf("st_other = %x\n", sym.st_other);
-      // printf("st_shndx = %x\n", sym.st_shndx);
-      // printf("st_value = %p\n", (void *)sym.st_value);
-      // printf("st_size = %lx\n", sym.st_size);
-      // printf("\n");
       sts[sts_idx].addr = (void*)sym.st_value;
       sts[sts_idx].size = sym.st_size;
       ++sts_idx;
     }
   }
-  // printf("\n");
-
-  //for (int i = 0; i < sts_len; ++i) {
-  //  printf("addr: %p, name: %s\n", sts[i].addr, sts[i].name);
-  //}
   return sts_idx;
 }
 
