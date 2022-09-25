@@ -6,6 +6,7 @@
         f(beq) f(bne) f(addiw) f(sw) f(lui) f(mulw) f(divw) f(remw) \
         f(slli) f(srli) f(srai) f(lbu) f(subw) f(sb) f(slliw) f(srliw) \
         f(sraiw) f(blt) f(slt) f(andi) f(sh) f(sllw) f(and) f(sltu) f(xori) \
-        f(or) f(bge) f(lh) f(lhu) f(mul) f(bltu) f(sraw) f(srlw)
+        f(or) f(bge) f(lh) f(lhu) f(mul) f(bltu) f(sraw) f(srlw) f(divu) \
+        f(lwu)
 
 def_all_EXEC_ID();

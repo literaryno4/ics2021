@@ -23,6 +23,10 @@ def_EHelper(lw) {
   rtl_lms(s, ddest, dsrc1, id_src2->imm, 4);
 }
 
+def_EHelper(lwu) {
+  rtl_lms(s, ddest, dsrc1, id_src2->imm, 4);
+}
+
 def_EHelper(lh) {
   rtl_lms(s, ddest, dsrc1, id_src2->imm, 2);
 }
@@ -141,6 +145,10 @@ def_EHelper(sub) {
 
 def_EHelper(mul) {
   rtl_mulu_lo(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(divu) {
+  rtl_divu_q(s, ddest, id_src1->preg, id_src2->preg);
 }
 
 def_EHelper(slt) {
