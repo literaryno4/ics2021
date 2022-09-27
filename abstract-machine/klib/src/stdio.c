@@ -5,62 +5,27 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-char out_buf[4096];
-
-static int format(const char* fmt, ...) {
-  va_list ap, ap2;
-  int d;
-  char * out = out_buf;
-  char ch, *s, *tmp = out;
-  va_start(ap, fmt);
-  va_copy(ap2, ap);
-  while ((ch = *fmt++)) {
-    if ('%' == ch) {
-      switch (ch = *fmt++) {
-        case 's':
-          s = va_arg(ap, char *);
-          strncpy(out, s, strlen(s));
-          out += strlen(s);
-          break;
-        case 'd': {
-          char buffer[32];
-          int i = 0;
-          int neg = 0;
-          d = va_arg(ap, int);
-          if (d < 0) {
-            neg = 1;
-            d = -d;
-          }
-          while (d > 0) {
-            buffer[i++] = (d % 10 + '0');
-            d /= 10;
-          }
-          if (neg) {
-            buffer[i++] = '-';
-          }
-          while (i > 0) {
-            *out++ = buffer[--i];
-          }
-        } break;
-      }
-    } else {
-      *out++ = ch;
-    }
-  }
-  *out = '\0';
-
-  return out - tmp;
-}
-
 int printf(const char *fmt, ...) { 
   va_list ap, ap2;
-  int d;
+  long long d;
+  int islong = 0;
   int ret = 0;
+  int zero_pad = 0;
   char ch, *s;
   va_start(ap, fmt);
   va_copy(ap2, ap);
   while ((ch = *fmt++)) {
     if ('%' == ch) {
+      if(*fmt == '0') {
+        while ((ch = *fmt++) && (ch >= '0' && ch <= '9')) {
+          zero_pad = zero_pad * 10 + (ch - '0');
+        }
+        --fmt;
+      }
+      if (*fmt == 'l') {
+        islong = 1;
+        ++fmt;
+      }
       switch (ch = *fmt++) {
         case 's':
           s = va_arg(ap, char *);
@@ -70,23 +35,27 @@ int printf(const char *fmt, ...) {
         case 'd': {
           char buffer[32];
           int i = 0;
-          int neg = 0;
-          d = va_arg(ap, int);
+          if (islong) {
+            d = va_arg(ap, long long);
+          } else {
+            d = va_arg(ap, int);
+          }
           if (d < 0) {
-            neg = 1;
+            putch('-');
             d = -d;
-          } else if (d == 0) {
-            putch('0');
-            ++ret;
-            break;
+          }
+          if (d == 0) {
+            buffer[i++] = '0';
           }
           while (d > 0) {
             buffer[i++] = (d % 10 + '0');
             d /= 10;
           }
-          if (neg) {
-            buffer[i++] = '-';
+          while (zero_pad > i) {
+            putch('0');
+            --zero_pad;
           }
+          zero_pad = 0;
           while (i > 0) {
             putch(buffer[--i]);
             ++ret;
@@ -98,7 +67,6 @@ int printf(const char *fmt, ...) {
       ++ret;
     }
   }
-
   return ret;
 }
 

@@ -39,6 +39,10 @@ def_EHelper(lbu) {
   rtl_lm(s, ddest, dsrc1, id_src2->imm, 1);
 }
 
+def_EHelper(lb) {
+  rtl_lms(s, ddest, dsrc1, id_src2->imm, 1);
+}
+
 def_EHelper(sd) {
   rtl_sm(s, ddest, dsrc1, id_src2->imm, 8);
 }
@@ -61,6 +65,10 @@ def_EHelper(addi) {
 
 def_EHelper(sltiu) {
   rtl_li(s, ddest, ((uint32_t)(*id_src1->preg) < (uint32_t)(id_src2->imm)) ? 1 : 0);
+}
+
+def_EHelper(slti) {
+  rtl_li(s, ddest, ((int32_t)(*id_src1->preg) < (int32_t)(id_src2->simm)) ? 1 : 0);
 }
 
 def_EHelper(andi) {
@@ -131,8 +139,16 @@ def_EHelper(divw) {
   rtl_divw(s, ddest, id_src1->preg, id_src2->preg);
 }
 
+def_EHelper(divuw) {
+  rtl_divuw(s, ddest, id_src1->preg, id_src2->preg);
+}
+
 def_EHelper(remw) {
   rtl_remw(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(remuw) {
+  rtl_remuw(s, ddest, id_src1->preg, id_src2->preg);
 }
 
 def_EHelper(add) {
@@ -147,8 +163,24 @@ def_EHelper(mul) {
   rtl_mulu_lo(s, ddest, id_src1->preg, id_src2->preg);
 }
 
+def_EHelper(rem) {
+  rtl_divs_r(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(remu) {
+  rtl_divu_r(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(div) {
+  rtl_divs_q(s, ddest, id_src1->preg, id_src2->preg);
+}
+
 def_EHelper(divu) {
   rtl_divu_q(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(sll) {
+  rtl_sll(s, ddest, id_src1->preg, id_src2->preg);
 }
 
 def_EHelper(slt) {
@@ -169,6 +201,10 @@ def_EHelper(sltu) {
 
 def_EHelper(and) {
   rtl_and(s, ddest, id_src1->preg, id_src2->preg);
+}
+
+def_EHelper(xor) {
+  rtl_xor(s, ddest, id_src1->preg, id_src2->preg);
 }
 
 def_EHelper(or) {
@@ -229,6 +265,12 @@ def_EHelper(blt) {
 
 def_EHelper(bge) {
   if (((int32_t)*id_src1->preg) >= ((int32_t)*id_dest->preg)) {
+    rtl_j(s,  id_src2->imm + s->pc);
+  }
+}
+
+def_EHelper(bgeu) {
+  if (((uint32_t)*id_src1->preg) >= ((uint32_t)*id_dest->preg)) {
     rtl_j(s,  id_src2->imm + s->pc);
   }
 }
