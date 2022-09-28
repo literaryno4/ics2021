@@ -33,7 +33,7 @@ int printf(const char *fmt, ...) {
           ret += strlen(s);
           break;
         case 'd': {
-          char buffer[32];
+          char buffer[64];
           int i = 0;
           if (islong) {
             d = va_arg(ap, long long);
