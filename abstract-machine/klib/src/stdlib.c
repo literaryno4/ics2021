@@ -4,7 +4,7 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
-static char *hbrk;
+// static char *hbrk;
 
 int rand(void) {
   // RAND_MAX assumed to be 32767
@@ -31,19 +31,19 @@ int atoi(const char* nptr) {
 }
 
 void *malloc(size_t size) {
-  hbrk = (void *)ROUNDUP(heap.start, 8);
-  size  = (size_t)ROUNDUP(size, 8);
-  char *old = hbrk;
-  hbrk += size;
-  printf("freesp: %ld\n", (uintptr_t)heap.end - (uintptr_t)hbrk);
-  printf("start: %lp, end: %lp, %lp\n", heap.start, heap.end, hbrk);
-  assert((uintptr_t)heap.start <= (uintptr_t)hbrk && (uintptr_t)hbrk < (uintptr_t)heap.end);
-  for (uint64_t *p = (uint64_t *)old; p != (uint64_t *)hbrk; p ++) {
-    *p = 0;
-  }
-  //assert((uintptr_t)hbrk - (uintptr_t)heap.start <= setting->mlim);
-  printf("out malloc\n");
-  return old;
+  // hbrk = (void *)ROUNDUP(heap.start, 8);
+  // size  = (size_t)ROUNDUP(size, 8);
+  // char *old = hbrk;
+  // hbrk += size;
+  // printf("freesp: %ld\n", (uintptr_t)heap.end - (uintptr_t)hbrk);
+  // printf("start: %lp, end: %lp, %lp\n", heap.start, heap.end, hbrk);
+  // assert((uintptr_t)heap.start <= (uintptr_t)hbrk && (uintptr_t)hbrk < (uintptr_t)heap.end);
+  // for (uint64_t *p = (uint64_t *)old; p != (uint64_t *)hbrk; p ++) {
+  //   *p = 0;
+  // }
+  // //assert((uintptr_t)hbrk - (uintptr_t)heap.start <= setting->mlim);
+  // printf("out malloc\n");
+  // return old;
 
   // On native, malloc() will be called during initializaion of C runtime.
   // Therefore do not call panic() here, else it will yield a dead recursion:
