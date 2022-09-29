@@ -37,6 +37,7 @@ int printf(const char *fmt, ...) {
           int i = 0;
           if (islong) {
             d = va_arg(ap, long long);
+            islong = 0;
           } else {
             d = va_arg(ap, int);
           }

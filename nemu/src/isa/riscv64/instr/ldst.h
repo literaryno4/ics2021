@@ -16,7 +16,7 @@ static void print_space (int len) {
 #endif
 
 def_EHelper(ld) {
-  rtl_lm(s, ddest, dsrc1, id_src2->imm, 8);
+  rtl_lms(s, ddest, dsrc1, id_src2->imm, 8);
 }
 
 def_EHelper(lw) {
@@ -24,7 +24,7 @@ def_EHelper(lw) {
 }
 
 def_EHelper(lwu) {
-  rtl_lms(s, ddest, dsrc1, id_src2->imm, 4);
+  rtl_lm(s, ddest, dsrc1, id_src2->imm, 4);
 }
 
 def_EHelper(lh) {
@@ -77,6 +77,10 @@ def_EHelper(andi) {
 
 def_EHelper(xori) {
   rtl_xori(s, ddest, id_src1->preg, id_src2->simm);
+}
+
+def_EHelper(ori) {
+  rtl_ori(s, ddest, id_src1->preg, id_src2->simm);
 }
 
 // shift
