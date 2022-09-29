@@ -250,37 +250,27 @@ def_EHelper(jalr) {
 
 // branch
 def_EHelper(beq) {
-  if ((*id_src1->preg) == (*id_dest->preg)) {
-    rtl_j(s,  id_src2->simm + s->pc);
-  }
+  rtl_j(s,  ((int32_t)*id_src1->preg) == ((int32_t)*id_dest->preg) ? id_src2->simm + s->pc : s->snpc);
 }
 
 def_EHelper(bne) {
-  if ((*id_src1->preg) != (*id_dest->preg)) {
-    rtl_j(s,  id_src2->simm + s->pc);
-  }
+  rtl_j(s,  (*id_src1->preg) != (*id_dest->preg) ? id_src2->simm + s->pc : s->snpc);
+  rtl_j(s,  ((int32_t)*id_src1->preg) != ((int32_t)*id_dest->preg) ? id_src2->simm + s->pc : s->snpc);
 }
 
 def_EHelper(blt) {
-  if (((int32_t)*id_src1->preg) < ((int32_t)*id_dest->preg)) {
-    rtl_j(s,  id_src2->simm + s->pc);
-  }
-}
-
-def_EHelper(bge) {
-  if (((int32_t)*id_src1->preg) >= ((int32_t)*id_dest->preg)) {
-    rtl_j(s,  id_src2->simm + s->pc);
-  }
-}
-
-def_EHelper(bgeu) {
-  if (((uint32_t)*id_src1->preg) >= ((uint32_t)*id_dest->preg)) {
-    rtl_j(s,  id_src2->imm + s->pc);
-  }
+  rtl_j(s,  (*id_src1->preg) < (*id_dest->preg) ? id_src2->simm + s->pc : s->snpc);
+  rtl_j(s,  ((int32_t)*id_src1->preg) < ((int32_t)*id_dest->preg) ? id_src2->simm + s->pc : s->snpc);
 }
 
 def_EHelper(bltu) {
-  if ((*id_src1->preg) < (*id_dest->preg)) {
-    rtl_j(s,  id_src2->imm + s->pc);
-  }
+  rtl_j(s,  ((uint32_t)*id_src1->preg) < ((uint32_t)*id_dest->preg) ? id_src2->simm + s->pc : s->snpc);
+}
+
+def_EHelper(bge) {
+  rtl_j(s,  ((int32_t)*id_src1->preg) >= ((int32_t)*id_dest->preg) ? id_src2->simm + s->pc : s->snpc);
+}
+
+def_EHelper(bgeu) {
+  rtl_j(s,  ((uint32_t)*id_src1->preg) >= ((uint32_t)*id_dest->preg) ? id_src2->simm + s->pc : s->snpc);
 }
