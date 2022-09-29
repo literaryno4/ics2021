@@ -16,11 +16,11 @@ static void print_space (int len) {
 #endif
 
 def_EHelper(ld) {
-  rtl_lms(s, ddest, dsrc1, id_src2->imm, 8);
+  rtl_lms(s, ddest, dsrc1, id_src2->simm, 8);
 }
 
 def_EHelper(lw) {
-  rtl_lms(s, ddest, dsrc1, id_src2->imm, 4);
+  rtl_lms(s, ddest, dsrc1, id_src2->simm, 4);
 }
 
 def_EHelper(lwu) {
@@ -28,7 +28,7 @@ def_EHelper(lwu) {
 }
 
 def_EHelper(lh) {
-  rtl_lms(s, ddest, dsrc1, id_src2->imm, 2);
+  rtl_lms(s, ddest, dsrc1, id_src2->simm, 2);
 }
 
 def_EHelper(lhu) {
@@ -40,23 +40,23 @@ def_EHelper(lbu) {
 }
 
 def_EHelper(lb) {
-  rtl_lms(s, ddest, dsrc1, id_src2->imm, 1);
+  rtl_lms(s, ddest, dsrc1, id_src2->simm, 1);
 }
 
 def_EHelper(sd) {
-  rtl_sm(s, ddest, dsrc1, id_src2->imm, 8);
+  rtl_sm(s, ddest, dsrc1, id_src2->simm, 8);
 }
 
 def_EHelper(sw) {
-  rtl_sm(s, ddest, dsrc1, id_src2->imm, 4);
+  rtl_sm(s, ddest, dsrc1, id_src2->simm, 4);
 }
 
 def_EHelper(sh) {
-  rtl_sm(s, ddest, dsrc1, id_src2->imm, 2);
+  rtl_sm(s, ddest, dsrc1, id_src2->simm, 2);
 }
 
 def_EHelper(sb) {
-  rtl_sm(s, ddest, dsrc1, id_src2->imm, 1);
+  rtl_sm(s, ddest, dsrc1, id_src2->simm, 1);
 }
 
 def_EHelper(addi) {
@@ -251,25 +251,25 @@ def_EHelper(jalr) {
 // branch
 def_EHelper(beq) {
   if ((*id_src1->preg) == (*id_dest->preg)) {
-    rtl_j(s,  id_src2->imm + s->pc);
+    rtl_j(s,  id_src2->simm + s->pc);
   }
 }
 
 def_EHelper(bne) {
   if ((*id_src1->preg) != (*id_dest->preg)) {
-    rtl_j(s,  id_src2->imm + s->pc);
+    rtl_j(s,  id_src2->simm + s->pc);
   }
 }
 
 def_EHelper(blt) {
   if (((int32_t)*id_src1->preg) < ((int32_t)*id_dest->preg)) {
-    rtl_j(s,  id_src2->imm + s->pc);
+    rtl_j(s,  id_src2->simm + s->pc);
   }
 }
 
 def_EHelper(bge) {
   if (((int32_t)*id_src1->preg) >= ((int32_t)*id_dest->preg)) {
-    rtl_j(s,  id_src2->imm + s->pc);
+    rtl_j(s,  id_src2->simm + s->pc);
   }
 }
 
