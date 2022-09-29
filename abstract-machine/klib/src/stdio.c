@@ -27,6 +27,11 @@ int printf(const char *fmt, ...) {
         ++fmt;
       }
       switch (ch = *fmt++) {
+        case 'c':
+          ch = va_arg(ap, int);
+          putch(ch);
+          ++ret;
+          break;
         case 's':
           s = va_arg(ap, char *);
           putstr(s);
@@ -43,6 +48,7 @@ int printf(const char *fmt, ...) {
           }
           if (d < 0) {
             putch('-');
+            ++ret;
             d = -d;
           }
           if (d == 0) {
@@ -54,6 +60,7 @@ int printf(const char *fmt, ...) {
           }
           while (zero_pad > i) {
             putch('0');
+            ++ret;
             --zero_pad;
           }
           zero_pad = 0;
@@ -62,6 +69,9 @@ int printf(const char *fmt, ...) {
             ++ret;
           }
         } break;
+
+        default:
+          break;
       }
     } else {
       putch(ch);
@@ -109,6 +119,8 @@ int sprintf(char *out, const char *fmt, ...) {
             *out++ = buffer[--i];
           }
         } break;
+        default:
+          break;
       }
     } else {
       *out++ = ch;
